@@ -854,7 +854,8 @@ static int nsvg__cmpEdge(const void *p, const void *q)
 
 static NSVGactiveEdge* nsvg__addActive(NSVGrasterizer* r, NSVGedge* e, float startPoint)
 {
-	 NSVGactiveEdge* z;
+	NSVGactiveEdge* z;
+	float dxdy;
 
 	if (r->freelist != NULL) {
 		// Restore from freelist.
@@ -866,7 +867,7 @@ static NSVGactiveEdge* nsvg__addActive(NSVGrasterizer* r, NSVGedge* e, float sta
 		if (z == NULL) return NULL;
 	}
 
-	float dxdy = (e->x1 - e->x0) / (e->y1 - e->y0);
+	dxdy = (e->x1 - e->x0) / (e->y1 - e->y0);
 //	STBTT_assert(e->y0 <= start_point);
 	// round dx down to avoid going too far
 	if (dxdy < 0)
@@ -979,10 +980,14 @@ static unsigned int nsvg__applyOpacity(unsigned int c, float u)
 	return nsvg__RGBA((unsigned char)r, (unsigned char)g, (unsigned char)b, (unsigned char)a);
 }
 
+#if defined(_MSC_VER) && _MSC_VER < 1700
+#define nsvg__div255(x) ((x+1) * 257) >> 16
+#else
 static inline int nsvg__div255(int x)
 {
     return ((x+1) * 257) >> 16;
 }
+#endif
 
 static void nsvg__scanlineSolid(unsigned char* dst, int count, unsigned char* cover, int x, int y,
 								float tx, float ty, float scale, NSVGcachedPaint* cache)

@@ -35,6 +35,10 @@ extern "C" {
 #endif
 #endif
 
+#if defined(_MSC_VER) && _MSC_VER < 1700
+#define strtoll _strtoi64
+#endif
+
 // NanoSVG is a simple stupid single-header-file SVG parse. The output of the parser is a list of cubic bezier shapes.
 //
 // The library suits well for anything from rendering scalable icons in your editor application to prototyping a game.
